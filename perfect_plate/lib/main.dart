@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'global.dart';
 import 'home.dart';
 
+//TODO: find a background
+
 void main() {
   runApp(const MyApp());
 }
