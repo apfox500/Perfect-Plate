@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:perfect_plate/bottom_buttons.dart';
+import 'bottom_buttons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
