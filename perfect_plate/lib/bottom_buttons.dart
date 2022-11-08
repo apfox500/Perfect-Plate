@@ -1,12 +1,14 @@
 import "package:flutter/material.dart";
 import 'package:page_transition/page_transition.dart';
 
+import 'global.dart';
 import 'home.dart';
 
 double buttonHeight = 50;
 
 class FooterButtons extends StatelessWidget {
-  const FooterButtons({Key? key, this.page = "Home"}) : super(key: key);
+  const FooterButtons(this.global, {Key? key, this.page = "Home"}) : super(key: key);
+  final Global global;
   final String page; //page that currently on
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class FooterButtons extends StatelessWidget {
           //home page -- Home
           Button(
             name: "Home",
-            pageWidget: const HomePage(),
+            pageWidget: HomePage(global),
             currentPage: page,
             color: Theme.of(context).colorScheme.primary,
             icon: Icons.home,

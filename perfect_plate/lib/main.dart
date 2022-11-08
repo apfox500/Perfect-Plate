@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'global.dart';
 import 'home.dart';
 
 void main() {
@@ -11,6 +12,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Instantiate global
+    Global global = Global();
+    //actually start app
     return MaterialApp(
       theme: ThemeData(
         //light theme
@@ -24,7 +28,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         //Probably will mostly be done by Andrew
       ),
-      home: const HomePage(),
+      home: HomePage(global),
       debugShowCheckedModeBanner: false,
       //debugShowMaterialGrid: true,
     );
