@@ -10,9 +10,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<List<dynamic>> foods = [
+    ["carrots", 70],
+    ["peas", 60],
+    ["fries", 50]
+  ];
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -22,6 +28,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              //Colorie display
               Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
@@ -34,9 +41,57 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              //list of things we've eaten
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width - 16,
+                child: ListView.builder(
+                  itemCount: foods.length,
+                  itemBuilder: ((context, i) {
+                    global.calories += (foods[i][1]) as int;
+                    return Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            foods[i][0].toString(),
+                          ),
+                          Text(
+                            foods[i][1].toString(),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return SimpleDialog(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        label: Text("Name of food"),
+                      ),
+                      onSubmitted: (val) {
+                        foods.add([val, 45]);
+                        Navigator.pop(context);
+                        setState(() {});
+                      },
+                    ),
+                    TextField()
+                  ],
+                );
+              });
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
