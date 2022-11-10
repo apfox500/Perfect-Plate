@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "1250",
+                    "${global.calories}",
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
