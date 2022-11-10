@@ -15,6 +15,7 @@ class _HomePageState extends State<HomePage> {
     ["peas", 60],
     ["fries", 50]
   ];
+
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
@@ -71,22 +72,27 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final nameController = TextEditingController();
+          final calController = TextEditingController();
           showDialog(
               context: context,
               builder: (context) {
                 return SimpleDialog(
                   children: [
                     TextField(
-                      decoration: InputDecoration(
-                        label: Text("Name of food"),
-                      ),
+                      controller: nameController,
+                      decoration:
+                          const InputDecoration(label: Text("Name of food"), hintText: "ex. carrots"),
                       onSubmitted: (val) {
-                        foods.add([val, 45]);
+                        foods.add([val, int.parse(calController.text)]);
                         Navigator.pop(context);
+
                         setState(() {});
                       },
                     ),
-                    TextField()
+                    TextField(
+                      controller: calController,
+                    )
                   ],
                 );
               });
