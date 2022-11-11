@@ -20,12 +20,44 @@ class Food {
 
   //JSON constructor
   factory Food.fromJson(Map<String, dynamic> json) {
+    List<List<dynamic>> servingSize = [
+      [json["servingSize"], json["servingSizeUnit"]]
+    ];
+    try {
+      servingSize.add(json["householdServingFullText"].split(" "));
+    } catch (_) {
+      print(_);
+    }
+
+    Map<String, double> nutritionInfo = {};
+    List<dynamic> foodNutrients = json["foodNutrients"] as List<dynamic>;
+    for (dynamic nutrient in foodNutrients) {
+      Map<dynamic, dynamic> nutrientMap = nutrient as Map<dynamic, dynamic>;
+      String name = (nutrientMap["nutrientName"] as String);
+      if (!name.contains("Fatty")) {
+        name = name.split(", ")[0];
+      }
+      double nutrientNumber = double.parse(nutrientMap["nutrientNumber"] as String);
+      nutritionInfo[name] = nutrientNumber;
+    }
+
     List<String> ingredients = (json["ingredients"] as String).split(", ");
-    //TODO: finish JSON decoding
     Food ret = Food(
-      name: json["lowercaseDescription"],
-    );
+        name: json["lowercaseDescription"],
+        servingSize: servingSize,
+        nutritionInfo: nutritionInfo,
+        ingredients: ingredients,
+        foodCategory: json["foodCategory"],
+        brandName: json["brandOwner"]);
 
     return ret;
   }
+
+  String simple4() {
+    String ret =
+        "Calories: ${nutritionInfo["Energy"].toString()}\n Protein: ${nutritionInfo["Protein"].toString()}\n Carbs: ${nutritionInfo["Carbohydrate"].toString()}\n Fat: ${nutritionInfo["Total lipid (fat)"].toString()}";
+    return ret;
+  }
+  //TODO create a toString
+  //multiple versions, total, nutrition overview(simple4 but nice), and serving size based
 }
