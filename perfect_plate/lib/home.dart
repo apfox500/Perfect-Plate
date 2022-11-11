@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'bottom_buttons.dart';
+import 'food.dart';
 import 'global.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(this.global, {Key? key}) : super(key: key);
   final Global global;
+  const HomePage(this.global, {Key? key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -15,11 +20,10 @@ class _HomePageState extends State<HomePage> {
     ["peas", 60],
     ["fries", 50]
   ];
-
+  List<Food> foodOptions = [];
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -73,27 +77,74 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final nameController = TextEditingController();
-          final calController = TextEditingController();
+
           showDialog(
               context: context,
               builder: (context) {
                 return SimpleDialog(
-                  children: [
-                    TextField(
-                      controller: nameController,
-                      decoration:
-                          const InputDecoration(label: Text("Name of food"), hintText: "ex. carrots"),
-                      onSubmitted: (val) {
-                        foods.add([val, int.parse(calController.text)]);
-                        Navigator.pop(context);
+                  children: (foodOptions.isEmpty)
+                      ? [
+                          TextField(
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              label: Text("Name of food"),
+                              hintText: "ex. carrots",
+                            ),
+                            onSubmitted: (name) async {
+                              //TODO fugure out best way for URL
+                              String url =
+                                  "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${global.usdaKey}&query=${name}&dataType=Branded&dataType=Foundation&sortBy=publishedDate&sortOrder=desc";
+                              //So this basically returns most recent 50
+                              //it took like 2 hours to get the url to work, please don't break
 
-                        setState(() {});
-                      },
-                    ),
-                    TextField(
-                      controller: calController,
-                    )
-                  ],
+                              http.Response response = await http.get(Uri.parse(url));
+                              //just gets the foods from theat json mess
+                              Iterable l = json.decode(response.body)["foods"];
+                              //maps them into a list of foods
+                              foodOptions = List<Food>.from(l.map((model) => Food.fromJson(model)));
+                              //now to clean up duplicates
+                              for (int i = 0; i < foodOptions.length; i++) {
+                                try {
+                                  String company = foodOptions[i].brandName!;
+                                  String name = foodOptions[i].name;
+                                  for (int j = i + 1; j < foodOptions.length; j++) {
+                                    if (foodOptions[j].name == name &&
+                                        foodOptions[j].brandName! == company) {
+                                      foodOptions.removeAt(j);
+                                    }
+                                  }
+                                } catch (_) {
+                                  print(_);
+                                }
+                              }
+                              //Then to display it
+                              setState(() {});
+                            },
+                          ),
+                        ]
+                      : [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 9,
+                            width: MediaQuery.of(context).size.width * 95,
+                            child: ListView.builder(
+                                itemCount: foodOptions.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          foodOptions[index].name,
+                                          style: Theme.of(context).textTheme.bodyMedium,
+                                        ),
+                                        Text(
+                                          foodOptions[index].toString(),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ],
                 );
               });
         },
