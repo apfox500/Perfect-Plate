@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'bottom_buttons.dart';
 import 'global.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage(this.global, {Key? key}) : super(key: key);
@@ -73,7 +74,6 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final nameController = TextEditingController();
-          final calController = TextEditingController();
           showDialog(
               context: context,
               builder: (context) {
@@ -81,18 +81,20 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration:
-                          const InputDecoration(label: Text("Name of food"), hintText: "ex. carrots"),
-                      onSubmitted: (val) {
-                        foods.add([val, int.parse(calController.text)]);
-                        Navigator.pop(context);
-
-                        setState(() {});
+                      decoration: const InputDecoration(
+                        label: Text("Name of food"),
+                        hintText: "ex. carrots",
+                      ),
+                      onSubmitted: (name) async {
+                        //TODO fugure out best way for URL
+                        String url =
+                            "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${global.usdaKey}&query=${name}&%5BBranded%5D";
+                        //So this basically return 50
+                        print(url);
+                        http.Response response = await http.get(Uri.parse(url));
+                        print(response);
                       },
                     ),
-                    TextField(
-                      controller: calController,
-                    )
                   ],
                 );
               });
