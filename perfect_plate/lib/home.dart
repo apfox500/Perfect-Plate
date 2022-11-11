@@ -11,11 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<List<dynamic>> foods = [
-    ["carrots", 70],
-    ["peas", 60],
-    ["fries", 50]
-  ];
+  List<List<dynamic>> foods = [];
 
   List<Widget> foodsForDay(DateTime date) {
     //I moved this up here so you can put things on the bottom
@@ -88,18 +84,26 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration:
-                          const InputDecoration(label: Text("Name of food"), hintText: "ex. carrots"),
-                      onSubmitted: (val) {
-                        foods.add([val, int.parse(calController.text)]);
+                      decoration: const InputDecoration(
+                          label: Text("Name of food"), hintText: "ex. carrots"),
+                      onSubmitted: (nameFood) {
+                        foods.add([nameFood, int.parse(calController.text)]);
                         Navigator.pop(context);
 
                         setState(() {});
                       },
                     ),
                     TextField(
-                      controller: calController,
-                    )
+                        controller: calController,
+                        decoration: const InputDecoration(
+                            label: Text("Number of calories"),
+                            hintText: "ex. 70"),
+                        onSubmitted: (numCals) {
+                          foods.add([nameController.text, int.parse(numCals)]);
+                          //global.calories += int.parse(numCals);
+                          Navigator.pop(context);
+                          setState(() {});
+                        })
                   ],
                 );
               });
