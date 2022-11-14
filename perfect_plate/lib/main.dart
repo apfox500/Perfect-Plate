@@ -4,6 +4,7 @@ import 'global.dart';
 import 'home.dart';
 
 //TODO: find a background
+//TODO: make the settings page
 
 void main() {
   runApp(const MyApp());
