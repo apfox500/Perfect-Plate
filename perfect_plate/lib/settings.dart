@@ -1,10 +1,7 @@
 //The user should be able to set the number of calories they want as their goal
 //TODO: make the settings page
 
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:perfect_plate/bottom_buttons.dart';
 
 import 'global.dart';
@@ -28,7 +25,9 @@ class _SettingsPageState extends State<SettingsPage> {
       //let user choose max calories
       body: Column(children: [
         TextField(
-          decoration: const InputDecoration(label: Text("Calorie Goal")),
+          decoration: const InputDecoration(
+            label: Text("Calorie Goal"),
+          ),
         )
       ]),
     );
