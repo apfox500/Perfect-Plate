@@ -1,5 +1,36 @@
 //The user should be able to set the number of calories they want as their goal
-//some helpful tips:
-//page should follow home, just with a different body
-//need to create a new button in bottom_buttons.dart
-//type "stf" and then enter on stateful widegt to name it "SettingsPage"
+//TODO: make the settings page
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:perfect_plate/bottom_buttons.dart';
+
+import 'global.dart';
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage(this.global, {super.key});
+  final Global global;
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
+  Widget build(BuildContext context) {
+    Global global = widget.global;
+    return Scaffold(
+      bottomNavigationBar: FooterButtons(
+        global,
+        page: "settings",
+      ),
+      //let user choose max calories
+      body: Column(children: [
+        TextField(
+          decoration: const InputDecoration(label: Text("Calorie Goal")),
+        )
+      ]),
+    );
+  }
+}
