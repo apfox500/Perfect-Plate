@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         //dark theme
-        colorSchemeSeed: Colors.purple, //TODO: Pick some colors for the app ryan!
+        colorSchemeSeed: Colors.purple,
         brightness: Brightness.dark,
         //Probably will mostly be done by Andrew
       ),
