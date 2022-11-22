@@ -17,6 +17,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //Instantiate global
     Global global = Global();
+
+    global.calories[DateTime.now().toFormattedString()] = [
+      0,
+      2300,
+      {
+        "breakfast": [],
+        "lunch": [],
+        "dinner": [],
+        "snacks": [],
+      }
+    ];
     //actually start app
     return MaterialApp(
       theme: ThemeData(
@@ -44,5 +55,11 @@ class MyApp extends StatelessWidget {
 extension DateOnlyCompare on DateTime {
   bool isSameDate(DateTime other) {
     return year == other.year && month == other.month && day == other.day;
+  }
+}
+
+extension ToString on DateTime {
+  String toFormattedString() {
+    return "$month/$day"; //returns MM/DD
   }
 }

@@ -11,36 +11,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<List<dynamic>> foods = [];
-
-  List<Widget> foodsForDay(DateTime date) {
-    //I moved this up here so you can put things on the bottom
-    //TODO: Separate into chunks by Meal(brekfast, lunch, dinner, snacks)
-    List<Widget> widgets = [];
-    for (int i = 0; i < foods.length; i++) {
-      widgets.add(
-        Card(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                foods[i][0].toString(),
-              ),
-              Text(
-                foods[i][1].toString(),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    return widgets;
-  }
-
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
-
+    //meal:[[food1 name, food1 calories], [food2 name, food2 calories]]
+    Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -50,26 +25,60 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-                  //TODO: put the date somewhere on the screen(top, bottom, whereever you think is best)
-                  //TODO: throw this container into a row, with IconButton()s on either side(use MainAxis spaceBetween) to toggle between dates
-                  //Calorie display
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "${global.calories}",
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_left,
                     ),
                   ),
-                ] +
-                foodsForDay(DateTime.now()) + //list of things we've eaten
-                [
-                  //TODO: put the calories remaning here(or wherever else you think will work)
+                  Column(
+                    children: [
+                      Text(
+                        global.currentDate,
+                      ),
+                      Text(
+                          "${global.calories[global.currentDate]![1] - global.calories[global.currentDate]![0]} cal remaining")
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_right,
+                    ),
+                  ),
                 ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .9,
+                child: ListView.builder(
+                    itemCount: meals.keys.length,
+                    itemBuilder: (context, index) {
+                      String mealName = meals.keys.toList()[index];
+                      return Column(
+                        children: <Widget>[
+                              Text(
+                                mealName,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ] +
+                            (meals[mealName]!).map((dynamic food) {
+                              //food is [food name, calories, carbs, fats, protien]
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(food[0]),
+                                  Text(food[1].toString()),
+                                ],
+                              );
+                            }).toList(),
+                      );
+                    }),
+              ),
+            ],
           ),
         ),
       ),
@@ -82,12 +91,15 @@ class _HomePageState extends State<HomePage> {
               builder: (context) {
                 return SimpleDialog(
                   children: [
+                    //TODO add in meal selection(DropDownButton?)
                     TextField(
                       controller: nameController,
                       decoration: const InputDecoration(
-                          label: Text("Name of food"), hintText: "ex. carrots"),
+                        label: Text("Name of food"),
+                        hintText: "ex. carrots",
+                      ),
                       onSubmitted: (nameFood) {
-                        foods.add([nameFood, int.parse(calController.text)]);
+                        addFood(nameFood, int.parse(calController.text), meals, global);
                         Navigator.pop(context);
 
                         setState(() {});
@@ -96,14 +108,16 @@ class _HomePageState extends State<HomePage> {
                     TextField(
                         controller: calController,
                         decoration: const InputDecoration(
-                            label: Text("Number of calories"),
-                            hintText: "ex. 70"),
+                          label: Text("Number of calories"),
+                          hintText: "ex. 70",
+                        ),
                         onSubmitted: (numCals) {
-                          foods.add([nameController.text, int.parse(numCals)]);
+                          addFood(nameController.text, int.parse(numCals), meals, global);
                           //global.calories += int.parse(numCals);
                           Navigator.pop(context);
                           setState(() {});
-                        })
+                        }),
+                    //TODO: add in the three macro nutrients(carbs, fats, and proteins)
                   ],
                 );
               });
@@ -112,4 +126,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+void addFood(String name, int calories, Map<String, List<dynamic>> meals, Global global) {
+  meals["breakfast"]!.add([name, calories]);
+  global.calories[global.currentDate]![0] += calories;
 }
