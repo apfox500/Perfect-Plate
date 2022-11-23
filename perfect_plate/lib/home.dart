@@ -8,6 +8,7 @@ import 'food.dart';
 import 'global.dart';
 
 class HomePage extends StatefulWidget {
+
   final Global global;
   const HomePage(this.global, {Key? key}) : super(key: key);
   @override
@@ -15,15 +16,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<List<dynamic>> foods = [
-    ["carrots", 70],
-    ["peas", 60],
-    ["fries", 50]
-  ];
-  List<Food> foodOptions = [];
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
+    //meal:[[food1 name, food1 calories], [food2 name, food2 calories]]
+    Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -32,42 +30,60 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              //Colorie display
-              Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "${global.calories}",
-                    style: Theme.of(context).textTheme.headline6,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_left,
+                    ),
                   ),
-                ),
+                  Column(
+                    children: [
+                      Text(
+                        global.currentDate,
+                      ),
+                      Text(
+                          "${global.calories[global.currentDate]![1] - global.calories[global.currentDate]![0]} cal remaining")
+                    ],
+
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_right,
+                    ),
+                  ),
+                ],
               ),
-              //list of things we've eaten
               SizedBox(
                 height: MediaQuery.of(context).size.height * .7,
-                width: MediaQuery.of(context).size.width - 16,
+                width: MediaQuery.of(context).size.width * .9,
                 child: ListView.builder(
-                  itemCount: foods.length,
-                  itemBuilder: ((context, i) {
-                    global.calories += (foods[i][1]) as int;
-                    return Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            foods[i][0].toString(),
-                          ),
-                          Text(
-                            foods[i][1].toString(),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
+                    itemCount: meals.keys.length,
+                    itemBuilder: (context, index) {
+                      String mealName = meals.keys.toList()[index];
+                      return Column(
+                        children: <Widget>[
+                              Text(
+                                mealName,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ] +
+                            (meals[mealName]!).map((dynamic food) {
+                              //food is [food name, calories, carbs, fats, protien]
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(food[0]),
+                                  Text(food[1].toString()),
+                                ],
+                              );
+                            }).toList(),
+                      );
+                    }),
               ),
             ],
           ),
@@ -76,11 +92,13 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final nameController = TextEditingController();
+          final calController = TextEditingController();
 
           showModalBottomSheet(
               context: context,
               builder: (context) {
                 return Padding(
+
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: (foodOptions.isEmpty)
@@ -153,4 +171,10 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+//actual function to add the food to the log
+void addFood(String name, int calories, Map<String, List<dynamic>> meals, Global global) {
+  meals["breakfast"]!.add([name, calories]);
+  global.calories[global.currentDate]![0] += calories;
 }

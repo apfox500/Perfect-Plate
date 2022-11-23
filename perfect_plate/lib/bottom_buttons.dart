@@ -25,8 +25,7 @@ class FooterButtons extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             icon: Icons.home,
           ),
-          //TODO: decide what pages we will want
-          //Currently theres home, profile, maybe a page to explore recipies
+          //TODO: create a settings page
         ],
       ),
     );
