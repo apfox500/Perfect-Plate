@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                           "${global.calories[global.currentDate]![1] - global.calories[global.currentDate]![0]} cal remaining")
                     ],
+
                   ),
                   IconButton(
                     onPressed: () {},
@@ -92,53 +93,77 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           final nameController = TextEditingController();
           final calController = TextEditingController();
+
           showModalBottomSheet(
               context: context,
               builder: (context) {
                 return Padding(
-                  padding: EdgeInsets.all(8),
+
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const Text("Log food"),
-                      //TODO add in meal selection(DropDownButton?)
-                      TextField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          label: Text("Name of food"),
-                          hintText: "ex. carrots",
-                        ),
-                        onSubmitted: (nameFood) {
-                          addFood(nameFood, int.parse(calController.text), meals, global);
-                          Navigator.pop(context);
+                    children: (foodOptions.isEmpty)
+                        ? [
+                            TextField(
+                              controller: nameController,
+                              decoration: const InputDecoration(
+                                label: Text("Name of food"),
+                                hintText: "ex. carrots",
+                              ),
+                              onSubmitted: (name) async {
+                                //TODO figure out best way for URL
+                                String url =
+                                    "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${global.usdaKey}&query=${name}&dataType=Branded&dataType=Foundation&sortBy=publishedDate&sortOrder=desc";
+                                //So this basically returns most recent 50
+                                //it took like 2 hours to get the url to work, please don't break
 
-                          setState(() {});
-                        },
-                      ),
-                      //Calories text field
-                      TextField(
-                          controller: calController,
-                          decoration: const InputDecoration(
-                            label: Text("Number of calories"),
-                            hintText: "ex. 70",
-                          ),
-                          onSubmitted: (numCals) {
-                            addFood(nameController.text, int.parse(numCals), meals, global);
-                            //global.calories += int.parse(numCals);
-                            Navigator.pop(context);
-                            setState(() {});
-                          }),
-                      //TODO: add in the three macro nutrients(carbs, fats, and proteins)
-                      //Submit button
-                      ElevatedButton(
-                        onPressed: () {
-                          addFood(nameController.text, int.parse(calController.text), meals, global);
-                        },
-                        child: const Text("Submit"),
-                      )
-                    ],
+                                http.Response response = await http.get(Uri.parse(url));
+                                //just gets the foods from theat json mess
+                                Iterable l = json.decode(response.body)["foods"];
+                                //maps them into a list of foods
+                                foodOptions = List<Food>.from(l.map((model) => Food.fromJson(model)));
+                                //now to clean up duplicates
+                                for (int i = 0; i < foodOptions.length; i++) {
+                                  try {
+                                    String company = foodOptions[i].brandName!;
+                                    String name = foodOptions[i].name;
+                                    for (int j = i + 1; j < foodOptions.length; j++) {
+                                      if (foodOptions[j].name == name && foodOptions[j].brandName! == company) {
+                                        foodOptions.removeAt(j);
+                                      }
+                                    }
+                                  } catch (_) {
+                                    print(_);
+                                  }
+                                }
+                                //Then to display it
+                                setState(() {});
+                              },
+                            ),
+                          ]
+                        : [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * .5,
+                              width: MediaQuery.of(context).size.width * .95,
+                              child: ListView.builder(
+                                  itemCount: foodOptions.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            foodOptions[index].name,
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                          Text(
+                                            foodOptions[index].simple4(),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ],
                   ),
-
                 );
               });
         },
