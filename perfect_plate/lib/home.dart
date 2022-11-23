@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'bottom_buttons.dart';
+import 'food.dart';
 import 'global.dart';
 
 class HomePage extends StatefulWidget {
-  //TODO: make a DateTime parameter(probably called date)
-  const HomePage(this.global, {Key? key}) : super(key: key);
+
   final Global global;
+  const HomePage(this.global, {Key? key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -16,6 +21,7 @@ class _HomePageState extends State<HomePage> {
     Global global = widget.global;
     //meal:[[food1 name, food1 calories], [food2 name, food2 calories]]
     Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -132,6 +138,7 @@ class _HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
+
                 );
               });
         },

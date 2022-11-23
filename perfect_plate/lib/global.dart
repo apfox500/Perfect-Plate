@@ -4,6 +4,9 @@ class Global {
   //Where global variables are housed
   //Flutter best practice is to not have actual global variables bc then hacking is easier
   //so we will follow this here
+  
+    String usdaKey = "EsPLcMS221nTaSyu42jAJzhm1OrxvIcBc0zeevO1";
+
   //int calories;
   //TODO: make calories look like below
   late String currentDate;
@@ -20,4 +23,3 @@ class Global {
     //calories = {DateTime.now():[[200, 2200],["food1", 200, 12, 5, 6]]}
     currentDate = DateTime.now().toFormattedString();
   }
-}
