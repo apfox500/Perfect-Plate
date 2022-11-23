@@ -86,39 +86,52 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           final nameController = TextEditingController();
           final calController = TextEditingController();
-          showDialog(
+          showModalBottomSheet(
               context: context,
               builder: (context) {
-                return SimpleDialog(
-                  children: [
-                    //TODO add in meal selection(DropDownButton?)
-                    TextField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        label: Text("Name of food"),
-                        hintText: "ex. carrots",
-                      ),
-                      onSubmitted: (nameFood) {
-                        addFood(nameFood, int.parse(calController.text), meals, global);
-                        Navigator.pop(context);
-
-                        setState(() {});
-                      },
-                    ),
-                    TextField(
-                        controller: calController,
+                return Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text("Log food"),
+                      //TODO add in meal selection(DropDownButton?)
+                      TextField(
+                        controller: nameController,
                         decoration: const InputDecoration(
-                          label: Text("Number of calories"),
-                          hintText: "ex. 70",
+                          label: Text("Name of food"),
+                          hintText: "ex. carrots",
                         ),
-                        onSubmitted: (numCals) {
-                          addFood(nameController.text, int.parse(numCals), meals, global);
-                          //global.calories += int.parse(numCals);
+                        onSubmitted: (nameFood) {
+                          addFood(nameFood, int.parse(calController.text), meals, global);
                           Navigator.pop(context);
+
                           setState(() {});
-                        }),
-                    //TODO: add in the three macro nutrients(carbs, fats, and proteins)
-                  ],
+                        },
+                      ),
+                      //Calories text field
+                      TextField(
+                          controller: calController,
+                          decoration: const InputDecoration(
+                            label: Text("Number of calories"),
+                            hintText: "ex. 70",
+                          ),
+                          onSubmitted: (numCals) {
+                            addFood(nameController.text, int.parse(numCals), meals, global);
+                            //global.calories += int.parse(numCals);
+                            Navigator.pop(context);
+                            setState(() {});
+                          }),
+                      //TODO: add in the three macro nutrients(carbs, fats, and proteins)
+                      //Submit button
+                      ElevatedButton(
+                        onPressed: () {
+                          addFood(nameController.text, int.parse(calController.text), meals, global);
+                        },
+                        child: const Text("Submit"),
+                      )
+                    ],
+                  ),
                 );
               });
         },
@@ -128,6 +141,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+//actual function to add the food to the log
 void addFood(String name, int calories, Map<String, List<dynamic>> meals, Global global) {
   meals["breakfast"]!.add([name, calories]);
   global.calories[global.currentDate]![0] += calories;
