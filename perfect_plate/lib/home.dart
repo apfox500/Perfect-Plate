@@ -8,6 +8,7 @@ import 'food.dart';
 import 'global.dart';
 
 class HomePage extends StatefulWidget {
+
   final Global global;
   const HomePage(this.global, {Key? key}) : super(key: key);
   @override
@@ -15,15 +16,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<List<dynamic>> foods = [
-    ["carrots", 70],
-    ["peas", 60],
-    ["fries", 50]
-  ];
-  List<Food> foodOptions = [];
   @override
   Widget build(BuildContext context) {
     Global global = widget.global;
+    //meal:[[food1 name, food1 calories], [food2 name, food2 calories]]
+    Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
@@ -32,43 +30,59 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              //Colorie display
-              Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "${global.calories}",
-                    style: Theme.of(context).textTheme.headline6,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_left,
+                    ),
                   ),
-                ),
+                  Column(
+                    children: [
+                      Text(
+                        global.currentDate,
+                      ),
+                      Text(
+                          "${global.calories[global.currentDate]![1] - global.calories[global.currentDate]![0]} cal remaining")
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_right,
+                    ),
+                  ),
+                ],
               ),
-              //list of things we've eaten
               SizedBox(
                 height: MediaQuery.of(context).size.height * .7,
-                width: MediaQuery.of(context).size.width - 16,
+                width: MediaQuery.of(context).size.width * .9,
                 child: ListView.builder(
-                  itemCount: foods.length,
-                  itemBuilder: ((context, i) {
-                    global.calories += (foods[i][1]) as int;
-                    return Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            foods[i][0].toString(),
-                          ),
-                          Text(
-                            foods[i][1].toString(),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
+                    itemCount: meals.keys.length,
+                    itemBuilder: (context, index) {
+                      String mealName = meals.keys.toList()[index];
+                      return Column(
+                        children: <Widget>[
+                              Text(
+                                mealName,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ] +
+                            (meals[mealName]!).map((dynamic food) {
+                              //food is [food name, calories, carbs, fats, protien]
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(food[0]),
+                                  Text(food[1].toString()),
+                                ],
+                              );
+                            }).toList(),
+                      );
+                    }),
               ),
             ],
           ),
@@ -77,74 +91,54 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final nameController = TextEditingController();
-
-          showDialog(
+          final calController = TextEditingController();
+          showModalBottomSheet(
               context: context,
               builder: (context) {
-                return SimpleDialog(
-                  children: (foodOptions.isEmpty)
-                      ? [
-                          TextField(
-                            controller: nameController,
-                            decoration: const InputDecoration(
-                              label: Text("Name of food"),
-                              hintText: "ex. carrots",
-                            ),
-                            onSubmitted: (name) async {
-                              //TODO fugure out best way for URL
-                              String url =
-                                  "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${global.usdaKey}&query=${name}&dataType=Branded&dataType=Foundation&sortBy=publishedDate&sortOrder=desc";
-                              //So this basically returns most recent 50
-                              //it took like 2 hours to get the url to work, please don't break
+                return Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text("Log food"),
+                      //TODO add in meal selection(DropDownButton?)
+                      TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          label: Text("Name of food"),
+                          hintText: "ex. carrots",
+                        ),
+                        onSubmitted: (nameFood) {
+                          addFood(nameFood, int.parse(calController.text), meals, global);
+                          Navigator.pop(context);
 
-                              http.Response response = await http.get(Uri.parse(url));
-                              //just gets the foods from theat json mess
-                              Iterable l = json.decode(response.body)["foods"];
-                              //maps them into a list of foods
-                              foodOptions = List<Food>.from(l.map((model) => Food.fromJson(model)));
-                              //now to clean up duplicates
-                              for (int i = 0; i < foodOptions.length; i++) {
-                                try {
-                                  String company = foodOptions[i].brandName!;
-                                  String name = foodOptions[i].name;
-                                  for (int j = i + 1; j < foodOptions.length; j++) {
-                                    if (foodOptions[j].name == name &&
-                                        foodOptions[j].brandName! == company) {
-                                      foodOptions.removeAt(j);
-                                    }
-                                  }
-                                } catch (_) {
-                                  print(_);
-                                }
-                              }
-                              //Then to display it
-                              setState(() {});
-                            },
+                          setState(() {});
+                        },
+                      ),
+                      //Calories text field
+                      TextField(
+                          controller: calController,
+                          decoration: const InputDecoration(
+                            label: Text("Number of calories"),
+                            hintText: "ex. 70",
                           ),
-                        ]
-                      : [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 9,
-                            width: MediaQuery.of(context).size.width * 95,
-                            child: ListView.builder(
-                                itemCount: foodOptions.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          foodOptions[index].name,
-                                          style: Theme.of(context).textTheme.bodyMedium,
-                                        ),
-                                        Text(
-                                          foodOptions[index].toString(),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ],
+                          onSubmitted: (numCals) {
+                            addFood(nameController.text, int.parse(numCals), meals, global);
+                            //global.calories += int.parse(numCals);
+                            Navigator.pop(context);
+                            setState(() {});
+                          }),
+                      //TODO: add in the three macro nutrients(carbs, fats, and proteins)
+                      //Submit button
+                      ElevatedButton(
+                        onPressed: () {
+                          addFood(nameController.text, int.parse(calController.text), meals, global);
+                        },
+                        child: const Text("Submit"),
+                      )
+                    ],
+                  ),
+
                 );
               });
         },
@@ -152,4 +146,10 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+//actual function to add the food to the log
+void addFood(String name, int calories, Map<String, List<dynamic>> meals, Global global) {
+  meals["breakfast"]!.add([name, calories]);
+  global.calories[global.currentDate]![0] += calories;
 }

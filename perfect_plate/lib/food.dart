@@ -58,6 +58,7 @@ class Food {
         "Calories: ${nutritionInfo["Energy"].toString()}\n Protein: ${nutritionInfo["Protein"].toString()}\n Carbs: ${nutritionInfo["Carbohydrate"].toString()}\n Fat: ${nutritionInfo["Total lipid (fat)"].toString()}";
     return ret;
   }
+
   //TODO create a toString
   //multiple versions, total, nutrition overview(simple4 but nice), and serving size based
 }
