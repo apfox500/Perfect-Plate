@@ -21,6 +21,8 @@ class _HomePageState extends State<HomePage> {
     Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
 
     return Scaffold(
+      backgroundColor:
+          (Theme.of(context).brightness == Brightness.light) ? Theme.of(context).backgroundColor : null,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: FooterButtons(global, page: "Home"),
       body: SafeArea(
@@ -33,8 +35,8 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   decoration: BoxDecoration(
                     color: (Theme.of(context).brightness == Brightness.light)
-                        ? Colors.blueGrey
-                        : Color.fromARGB(255, 182, 137, 1),
+                        ? Color.fromARGB(255, 51, 101, 138)
+                        : const Color.fromARGB(255, 246, 174, 45),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(
@@ -47,17 +49,25 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               "${global.calories[global.currentDate]![1] - global.calories[global.currentDate]![0]}\ncalories\nremaining",
                               textAlign: TextAlign.center,
+                              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                             ),
                             CircularPercentIndicator(
                               radius: 50,
                               percent: global.calories[global.currentDate]![0] /
                                   global.calories[global.currentDate]![1],
-                              center: Text("${global.calories[global.currentDate]![0]}"),
-                              footer: const Text("Calories Eaten"),
+                              center: Text(
+                                "${global.calories[global.currentDate]![0]}",
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              ),
+                              footer: Text(
+                                "Calories Eaten",
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              ),
                             ),
-                            const Text(
+                            Text(
                               "__\ncalories\nburned",
                               textAlign: TextAlign.center,
+                              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                             ),
                           ],
                         ),
@@ -69,18 +79,27 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             CircularPercentIndicator(
                               radius: 15,
-                              footer: const Text("Carbs"),
+                              footer: Text(
+                                "Carbs",
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              ),
                               lineWidth: 3,
                             ),
                             CircularPercentIndicator(
                               radius: 15,
                               lineWidth: 3,
-                              footer: const Text("Protein"),
+                              footer: Text(
+                                "Protein",
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              ),
                             ),
                             CircularPercentIndicator(
                               radius: 15,
                               lineWidth: 3,
-                              footer: const Text("Fat"),
+                              footer: Text(
+                                "Fat",
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              ),
                             ),
                           ],
                         ),
@@ -115,23 +134,31 @@ class _HomePageState extends State<HomePage> {
                       itemCount: meals.keys.length,
                       itemBuilder: (context, index) {
                         String mealName = meals.keys.toList()[index];
-                        return Column(
-                          children: <Widget>[
-                                Text(
-                                  mealName,
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                              ] +
-                              (meals[mealName]!).map((dynamic food) {
-                                //food is [food name, calories, carbs, fats, protien]
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(food[0]),
-                                    Text(food[1].toString()),
-                                  ],
-                                );
-                              }).toList(),
+                        return Card(
+                          color: (Theme.of(context).brightness == Brightness.light)
+                              ? Color.fromARGB(255, 246, 174, 45)
+                              : Color.fromARGB(255, 51, 101, 138),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Column(
+                              children: <Widget>[
+                                    Text(
+                                      mealName,
+                                      style: Theme.of(context).textTheme.headline6,
+                                    ),
+                                  ] +
+                                  (meals[mealName]!).map((dynamic food) {
+                                    //food is [food name, calories, carbs, fats, protien]
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(food[0]),
+                                        Text(food[1].toString()),
+                                      ],
+                                    );
+                                  }).toList(),
+                            ),
+                          ),
                         );
                       }),
                 ),

@@ -13,7 +13,7 @@ class LogPage extends StatefulWidget {
 }
 
 class _LogPageState extends State<LogPage> {
-  String mealValue = "breakfast";
+  String mealValue = "Breakfast";
   final nameController = TextEditingController();
   final calController = TextEditingController();
 
@@ -86,15 +86,31 @@ class _LogPageState extends State<LogPage> {
 
   //actual function to add the food to the log
   void addFood(Map<String, List<dynamic>> meals, Global global) {
-    meals[mealValue]!.add([nameController.text, int.parse(calController.text)]);
-    global.calories[global.currentDate]![0] += int.parse(calController.text);
-    setState(() {});
-    Navigator.push(
-      context,
-      PageTransition(
-        child: HomePage(global),
-        type: PageTransitionType.fade,
-      ),
-    );
+    if (nameController.text.isEmpty || calController.text.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Empty Fields"),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Ok"),
+                ),
+              ],
+            );
+          });
+    } else {
+      meals[mealValue]!.add([nameController.text, int.parse(calController.text)]);
+      global.calories[global.currentDate]![0] += int.parse(calController.text);
+      setState(() {});
+      Navigator.push(
+        context,
+        PageTransition(
+          child: HomePage(global),
+          type: PageTransitionType.fade,
+        ),
+      );
+    }
   }
 }

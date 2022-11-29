@@ -22,24 +22,30 @@ class MyApp extends StatelessWidget {
       0,
       2300,
       {
-        "breakfast": [],
-        "lunch": [],
-        "dinner": [],
-        "snacks": [],
+        "Breakfast": [],
+        "Lunch": [],
+        "Dinner": [],
+        "Snacks": [],
       }
     ];
     //actually start app
     return MaterialApp(
       theme: ThemeData(
         //light theme
-        colorSchemeSeed: Colors.blueGrey, //TODO: Pick some colors for the app ryan!
-        brightness: Brightness.light,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 55, 101, 138),
+          brightness: Brightness.light,
+        ).copyWith(),
+        backgroundColor: const Color.fromARGB(255, 215, 215, 215),
         //Probably will mostly be done by Ryan
       ),
       darkTheme: ThemeData(
         //dark theme
-        colorSchemeSeed: Colors.amber,
-        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 246, 174, 45),
+          brightness: Brightness.dark,
+        ).copyWith(),
         //Probably will mostly be done by Andrew
       ),
 
