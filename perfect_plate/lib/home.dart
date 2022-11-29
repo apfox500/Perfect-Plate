@@ -32,14 +32,9 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    /* boxShadow: [
-                      BoxShadow(
-                        spreadRadius: 5,
-                        blurRadius: 5,
-                        color: Theme.of(context).colorScheme.onBackground,
-                      ),
-                    ], */
+                    color: (Theme.of(context).brightness == Brightness.light)
+                        ? Colors.blueGrey
+                        : Color.fromARGB(255, 182, 137, 1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(

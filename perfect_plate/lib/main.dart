@@ -32,13 +32,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         //light theme
-        colorSchemeSeed: Colors.purple, //TODO: Pick some colors for the app ryan!
+        colorSchemeSeed: Colors.blueGrey, //TODO: Pick some colors for the app ryan!
         brightness: Brightness.light,
         //Probably will mostly be done by Ryan
       ),
       darkTheme: ThemeData(
         //dark theme
-        colorSchemeSeed: Colors.purple,
+        colorSchemeSeed: Colors.amber,
         brightness: Brightness.dark,
         //Probably will mostly be done by Andrew
       ),
