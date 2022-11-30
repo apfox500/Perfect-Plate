@@ -8,8 +8,8 @@ class Global {
   String usdaKey = "EsPLcMS221nTaSyu42jAJzhm1OrxvIcBc0zeevO1";
 
   //int calories;
-  //TODO: make calories look like below
   late String currentDate;
+  //TODO: rework calories to hold the macros
   Map<String, List<dynamic>> calories =
       {}; //Date :[calories eaten, calorie goal {"name of food":  [calories, grams of protein, grams of carbs, grams of fat]...]
   //Some helpful things for dealing with nulls and null checks(happens with maps a lot)

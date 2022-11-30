@@ -25,18 +25,48 @@ class _LogPageState extends State<LogPage> {
     List<String> mealNames = meals.keys.toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Log Food"),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              //const Text("Log food"),
-              //Dropdown to select the meal
-              DropdownButton(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: (Theme.of(context).brightness == Brightness.light)
+                  ? const Color.fromARGB(255, 51, 101, 138)
+                  : const Color.fromARGB(255, 246, 174, 45),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(blurRadius: 5, spreadRadius: 1),
+              ],
+              //shape: BoxShape.circle,
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
+                    Text(
+                      widget.meal ?? "Log Food",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          //Dropdown to select the meal
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Visibility(
+              visible: widget.meal == null,
+              child: DropdownButton(
                   value: mealValue,
                   items: mealNames.map((e) {
                     return DropdownMenuItem<String>(
@@ -49,37 +79,43 @@ class _LogPageState extends State<LogPage> {
                       mealValue = value!;
                     });
                   }),
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  label: Text("Name of food"),
-                  hintText: "ex. carrots",
-                ),
-                onSubmitted: (nameFood) {
-                  addFood(meals, global);
-                },
-              ),
-              //Calories text field
-              TextField(
-                  controller: calController,
-                  decoration: const InputDecoration(
-                    label: Text("Number of calories"),
-                    hintText: "ex. 70",
-                  ),
-                  onSubmitted: (numCals) {
-                    addFood(meals, global);
-                  }),
-              //TODO: add in the three macro nutrients(carbs, fats, and proteins)
-              //Submit button
-              ElevatedButton(
-                onPressed: () {
-                  addFood(meals, global);
-                },
-                child: const Text("Submit"),
-              )
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                label: Text("Name of food"),
+                hintText: "ex. carrots",
+              ),
+              onSubmitted: (nameFood) {
+                addFood(meals, global);
+              },
+            ),
+          ),
+          //Calories text field
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+                controller: calController,
+                decoration: const InputDecoration(
+                  label: Text("Number of calories"),
+                  hintText: "ex. 70",
+                ),
+                onSubmitted: (numCals) {
+                  addFood(meals, global);
+                }),
+          ),
+          //TODO: add in the three macro nutrients(carbs, fats, and proteins)
+          //Submit button
+          ElevatedButton(
+            onPressed: () {
+              addFood(meals, global);
+            },
+            child: const Text("Submit"),
+          )
+        ],
       ),
     );
   }
@@ -91,7 +127,8 @@ class _LogPageState extends State<LogPage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text("Empty Fields"),
+              title: const Text("Empty Fields"),
+              content: const Text("Please make sure you filled out all foods"),
               actions: [
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -101,7 +138,7 @@ class _LogPageState extends State<LogPage> {
             );
           });
     } else {
-      meals[mealValue]!.add([nameController.text, int.parse(calController.text)]);
+      meals[widget.meal ?? mealValue]!.add([nameController.text, int.parse(calController.text)]);
       global.calories[global.currentDate]![0] += int.parse(calController.text);
       setState(() {});
       Navigator.push(

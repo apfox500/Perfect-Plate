@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'global.dart';
 import 'home.dart';
 
+//Switiching to the edamam api
+//https://developer.edamam.com/food-database-api
+
 //TODO: find a background
 //TODO: make the settings page
 
@@ -30,6 +33,8 @@ class MyApp extends StatelessWidget {
     ];
     //actually start app
     return MaterialApp(
+      //Color should follow a 60/30/10 primery/second/accent rule
+      //Accent color: Color.fromARGB(255, 255, 125, 125)
       theme: ThemeData(
         //light theme
 
