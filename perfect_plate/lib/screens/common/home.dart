@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:perfect_plate/log_page.dart';
+import 'package:perfect_plate/screens/common/log_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:perfect_plate/main.dart';
 
-import 'bottom_buttons.dart';
-import 'global.dart';
+import '../../widgets/bottom_buttons.dart';
+import '../../models/global.dart';
 
 class HomePage extends StatefulWidget {
   final Global global;

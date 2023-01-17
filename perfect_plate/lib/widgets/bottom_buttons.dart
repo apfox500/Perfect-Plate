@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:page_transition/page_transition.dart';
 
-import 'global.dart';
-import 'home.dart';
+import '../models/global.dart';
+import '../screens/common/home.dart';
 
 double buttonHeight = 50;
 

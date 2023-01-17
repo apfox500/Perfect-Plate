@@ -2,9 +2,9 @@
 //TODO: make the settings page
 
 import 'package:flutter/material.dart';
-import 'package:perfect_plate/bottom_buttons.dart';
+import 'package:perfect_plate/widgets/bottom_buttons.dart';
 
-import 'global.dart';
+import '../../models/global.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage(this.global, {super.key});

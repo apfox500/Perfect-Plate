@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:perfect_plate/home.dart';
+import 'package:perfect_plate/screens/common/home.dart';
 
-import 'global.dart';
+import '../../utilities/food.dart';
+import '../../models/global.dart';
+import '../../providers/search_food.dart';
 
 class LogPage extends StatefulWidget {
   const LogPage(this.global, {super.key, this.meal});
@@ -16,6 +18,7 @@ class _LogPageState extends State<LogPage> {
   String mealValue = "Breakfast";
   final nameController = TextEditingController();
   final calController = TextEditingController();
+  List<Food> foods = [];
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,6 @@ class _LogPageState extends State<LogPage> {
     //meal:[[food1 name, food1 calories], [food2 name, food2 calories]]
     Map<String, List<dynamic>> meals = global.calories[global.currentDate]![2] as Map<String, List<dynamic>>;
     List<String> mealNames = meals.keys.toList();
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -89,12 +91,13 @@ class _LogPageState extends State<LogPage> {
                 label: Text("Name of food"),
                 hintText: "ex. carrots",
               ),
-              onSubmitted: (nameFood) {
-                addFood(meals, global);
+              onSubmitted: (nameFood) async {
+                foods = await searchFood(name: nameFood);
+                setState(() {});
               },
             ),
           ),
-          //Calories text field
+          /* //Calories text field
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TextField(
@@ -107,13 +110,30 @@ class _LogPageState extends State<LogPage> {
                   addFood(meals, global);
                 }),
           ),
-          //TODO: add in the three macro nutrients(carbs, fats, and proteins)
+          //TODO: add in the three macro nutrients(carbs, fats, and proteins) */
           //Submit button
-          ElevatedButton(
+          /* ElevatedButton(
             onPressed: () {
               addFood(meals, global);
             },
             child: const Text("Submit"),
+          ), */
+          SizedBox.expand(
+            child: ListView.builder(
+                itemCount: foods.length,
+                itemBuilder: ((context, index) {
+                  Food food = foods[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      tileColor: const Color.fromARGB(255, 55, 101, 138),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      title: Text(food.name),
+                      subtitle: Text(food.brand ?? ""),
+                      trailing: Text(food.nutritionInfo["ENERC_KCAL"]!.round().toString()),
+                    ),
+                  );
+                })),
           )
         ],
       ),
